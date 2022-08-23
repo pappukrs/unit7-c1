@@ -1,8 +1,9 @@
 const fs = require('fs');
 const express = require('express');
 const cors = require('cors');
-let data = fs.readFileSync('productArr.json');
+let data = fs.readFileSync('products.json');
 let sabData = JSON.parse(data);
+console.log(sabData,"sabData")
 
 
 const app = express();
@@ -16,15 +17,16 @@ app.use((req,res,next)=>{
 //get method
 app.get('/products', (req, resp) => {
     return resp.status(200).send({
-        Products: allData
+        Products: sabData
     });
 });
 
 //post method
 app.post('/products/create', (req, resp) => {
     let createProduct = req.body;
-    sabData.push(createProduct);
-    fs.writeFile("productArr.json", JSON.stringify(sabData), (err) => {
+    console.log(createProduct,"createProduct");
+    sabData.products.push(createProduct);
+    fs.writeFile("products.json", JSON.stringify(sabData), (err) => {
         if (err) throw err;
     }
     );
@@ -40,14 +42,14 @@ app.post('/products/create', (req, resp) => {
 //update a product
 app.put('/products/:productId', (req, resp) => {
     let id = req.params.productId;
-    let index = allData.findIndex(item => item.id == id);
+    let index = sabData.products.findIndex(item => item.id == id);
     if(index == -1){
         return resp.status(404).send({
             message: 'Product not found'
         });
     }
-    allData[index] = req.body;
-    fs.writeFile("productArr.json", JSON.stringify(sabData), (err) => {
+    sabData.products[index] = req.body;
+    fs.writeFile("products.json", JSON.stringify(sabData), (err) => {
         if (err) throw err;
     }
     );
@@ -61,14 +63,14 @@ app.put('/products/:productId', (req, resp) => {
 //delete a product
 app.delete('/products/:productId', (req, resp) => {
     let id = req.params.productId;
-    let index = sabData.findIndex(item => item.id == id);
+    let index = sabData.products.findIndex(item => item.id == id);
     if(index == -1){
         return resp.status(404).send({
             message: 'Product not found'
         });
     }
-    sabData.splice(index, 1);
-    fs.writeFile("productArr.json", JSON.stringify(allData), (err) => {
+    sabData.products.splice(index, 1);
+    fs.writeFile("products.json", JSON.stringify(sabData), (err) => {
         if (err) throw err;
     }
     );

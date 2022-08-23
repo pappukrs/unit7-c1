@@ -6,6 +6,7 @@ const cors = require('cors');
 const app = express();
 app.use(express.json());
 app.use(cors());
+
 app.use((req,res,next)=>{
     next();
 }
@@ -18,13 +19,18 @@ app.post('/getmeip', (req, res) => {
                 message: 'WebsiteName doest not exist'
             });
         }
+
+
+
         return res.status(200).send({
-            websiteName: websiteName,
+            websiteName: req.body.websiteName,
             ipAddress: address
         });
     }
     );
 });
+
+
 
 app.listen(7000, () => {
     console.log('Server is running on port 7000');
