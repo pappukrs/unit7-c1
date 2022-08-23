@@ -1,8 +1,8 @@
 const fs = require('fs');
 const express = require('express');
 const cors = require('cors');
-let data = fs.readFileSync('products.json');
-let allData = JSON.parse(data);
+let data = fs.readFileSync('productArr.json');
+let sabData = JSON.parse(data);
 
 
 const app = express();
@@ -14,69 +14,74 @@ app.use((req,res,next)=>{
 })
 
 //get method
-app.get('/products', (req, res) => {
-    return res.status(200).send({
+app.get('/products', (req, resp) => {
+    return resp.status(200).send({
         Products: allData
     });
 });
 
-//create a new product
-app.post('/products/create', (req, res) => {
-    let newProduct = req.body;
-    allData.push(newProduct);
-    fs.writeFile("products.json", JSON.stringify(allData), (err) => {
+//post method
+app.post('/products/create', (req, resp) => {
+    let createProduct = req.body;
+    sabData.push(createProduct);
+    fs.writeFile("productArr.json", JSON.stringify(sabData), (err) => {
         if (err) throw err;
     }
     );
-    return res.status(200).send({
-        message: 'Product created successfully',
-        Product: newProduct
+    return resp.status(200).send({
+        message: 'Product created',
+        Product: createProduct
     });
 }
 );
 
-//delete a product
-app.delete('/products/:productId', (req, res) => {
-    let id = req.params.productId;
-    let index = allData.findIndex(product => product.id == id);
-    if(index == -1){
-        return res.status(404).send({
-            message: 'Product not found'
-        });
-    }
-    allData.splice(index, 1);
-    fs.writeFile("products.json", JSON.stringify(allData), (err) => {
-        if (err) throw err;
-    }
-    );
-    return res.status(200).send({
-        message: 'Product deleted successfully'
-    });
-}
-);
+
 
 //update a product
-app.put('/products/:productId', (req, res) => {
+app.put('/products/:productId', (req, resp) => {
     let id = req.params.productId;
-    let index = allData.findIndex(product => product.id == id);
+    let index = allData.findIndex(item => item.id == id);
     if(index == -1){
-        return res.status(404).send({
+        return resp.status(404).send({
             message: 'Product not found'
         });
     }
     allData[index] = req.body;
-    fs.writeFile("products.json", JSON.stringify(allData), (err) => {
+    fs.writeFile("productArr.json", JSON.stringify(sabData), (err) => {
         if (err) throw err;
     }
     );
-    return res.status(200).send({
-        message: 'Product updated successfully'
+    return resp.status(200).send({
+        message: 'Product updated'
+    });
+}
+);
+
+
+//delete a product
+app.delete('/products/:productId', (req, resp) => {
+    let id = req.params.productId;
+    let index = sabData.findIndex(item => item.id == id);
+    if(index == -1){
+        return resp.status(404).send({
+            message: 'Product not found'
+        });
+    }
+    sabData.splice(index, 1);
+    fs.writeFile("productArr.json", JSON.stringify(allData), (err) => {
+        if (err) throw err;
+    }
+    );
+    return resp.status(200).send({
+        message: 'Product deleted'
     });
 }
 );
 
 
 
-app.listen(5000, () => {
-    console.log('Server is running on port 5000');
+
+
+app.listen(9000, () => {
+    console.log('Server is running on port 9000');
 })

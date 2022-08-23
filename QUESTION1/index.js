@@ -1,5 +1,5 @@
 const express = require('express');
-const dns = require('dns');
+const dns = require('node:dns');
 
 const cors = require('cors');
 
@@ -7,23 +7,20 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use((req,res,next)=>{
-    console.log(req.method, req.path);
     next();
 }
 );
-//get ip post request
+//ip address getting post request
 app.post('/getmeip', (req, res) => {
-    let { website_name } = req.body;
-    // console.log(website_name);
-    dns.lookup(website_name, (err, address) => {
+    dns.lookup(req.body.websiteName, (err, address) => {
         if (err) {
             return res.status(404).send({
-                message: 'Website not found'
+                message: 'WebsiteName doest not exist'
             });
         }
         return res.status(200).send({
-            website_name: website_name,
-            ip_address: address
+            websiteName: websiteName,
+            ipAddress: address
         });
     }
     );
